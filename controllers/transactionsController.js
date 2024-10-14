@@ -7,6 +7,16 @@ const listTransactions = async (req, res) => {
   if (!month || isNaN(month) || month < 1 || month > 12) {
     return res.status(400).send('Invalid month');
   }
+  if(month===0)
+  {
+    const collection_ = getDB().collection('products');
+    const transactions_ = await collection
+      .skip(parseInt(skip))
+      .limit(parseInt(perPage))
+      .toArray();
+
+    return res.status(200).json(transactions);
+  }
 
   try {
     const skip = (page - 1) * perPage;
