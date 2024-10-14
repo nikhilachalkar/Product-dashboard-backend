@@ -16,7 +16,7 @@ const listTransactions = async (req, res) => {
       .limit(parseInt(perPage))
       .toArray();
 
-    return res.status(200).json(transactions_);
+     res.status(200).json(transactions_);
   }
 
   try {
