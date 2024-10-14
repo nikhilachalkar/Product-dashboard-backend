@@ -4,10 +4,10 @@ const { getDB } = require('../config/db');
 const listTransactions = async (req, res) => {
   const { month, search = '', page = 1, perPage = 10 } = req.query;
 
-  if (!month || isNaN(month) || month < 1 || month > 12) {
+  if (!month || isNaN(month) || month < 1 || month > 13) {
     return res.status(400).send('Invalid month');
   }
-  if(month===0)
+  if(month===13)
   {
     const collection_ = getDB().collection('products');
     const transactions_ = await collection
