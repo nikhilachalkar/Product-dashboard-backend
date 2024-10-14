@@ -34,6 +34,14 @@ const listTransactions = async (req, res) => {
       if (!isNaN(priceSearch)) {
         filter.$or.push({ price: priceSearch });
       }
+
+
+       transactions_ = await collection_
+        .find(filter)
+        .skip(skip)
+        .limit(parseInt(perPage))
+        .toArray();
+       return res.status(200).json(transactions_);
     }
 
 
