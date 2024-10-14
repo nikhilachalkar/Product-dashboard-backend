@@ -15,7 +15,7 @@ const listTransactions = async (req, res) => {
     // If month is 13, return all products without filtering by month
     if (parseInt(month) === 13) {
       const collection_ = getDB().collection('products');
-      const transactions_ = await collection_
+      let transactions_ = await collection_
         .find()
         .skip(skip)
         .limit(parseInt(perPage))
