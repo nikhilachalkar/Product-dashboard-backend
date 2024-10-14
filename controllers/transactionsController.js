@@ -4,49 +4,50 @@ const { getDB } = require('../config/db');
 const listTransactions = async (req, res) => {
   const { month, search = '', page = 1, perPage = 10 } = req.query;
 
+  // Validate month input
   if (!month || isNaN(month) || month < 1 || month > 13) {
     return res.status(400).send('Invalid month');
-  }
-  if(month===13)
-  {
-    const collection_ = getDB().collection('products');
-    const transactions_ = await collection_
-      .find()
-      .skip(parseInt(skip))
-      .limit(parseInt(perPage))
-      .toArray();
-
-     return res.status(200).json(transactions_);
   }
 
   try {
     const skip = (page - 1) * perPage;
+
+    // If month is 13, return all products without filtering by month
+    if (parseInt(month) === 13) {
+      const collection_ = getDB().collection('products');
+      const transactions_ = await collection_
+        .find()
+        .skip(skip)
+        .limit(parseInt(perPage))
+        .toArray();
+
+      return res.status(200).json(transactions_);
+    }
+
+    // Filter for other months
     const filter = {
       $expr: {
         $eq: [{ $month: "$dateOfSale" }, parseInt(month)]
       }
     };
 
+    // Apply search filters
     if (search) {
       const priceSearch = Number(search);
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
       if (!isNaN(priceSearch)) {
-        filter.$or = [
-          { title: { $regex: search, $options: 'i' } },
-          { description: { $regex: search, $options: 'i' } },
-          { price: priceSearch },
-        ];
-      } else {
-        filter.$or = [
-          { title: { $regex: search, $options: 'i' } },
-          { description: { $regex: search, $options: 'i' } },
-        ];
+        filter.$or.push({ price: priceSearch });
       }
     }
 
+    // Query database
     const collection = getDB().collection('products');
     const transactions = await collection
       .find(filter)
-      .skip(parseInt(skip))
+      .skip(skip)
       .limit(parseInt(perPage))
       .toArray();
 
@@ -70,15 +71,14 @@ const seedDatabase = async (req, res) => {
     // Insert new data
     await collection.insertMany(data);
 
-    collection.updateMany(
-      { dateOfSale: { $type: "string" } }, // Select documents where dateOfSale is a string
+    // Convert dateOfSale from string to date
+    await collection.updateMany(
+      { dateOfSale: { $type: "string" } },
       [
         {
           $set: {
             dateOfSale: {
-              $dateFromString: {
-                dateString: "$dateOfSale" // Convert string to Date
-              }
+              $dateFromString: { dateString: "$dateOfSale" }
             }
           }
         }
