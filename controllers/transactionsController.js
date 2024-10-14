@@ -10,7 +10,7 @@ const listTransactions = async (req, res) => {
   if(month===13)
   {
     const collection_ = getDB().collection('products');
-    const transactions_ = await collection
+    const transactions_ = await collection_
       .find()
       .skip(parseInt(skip))
       .limit(parseInt(perPage))
