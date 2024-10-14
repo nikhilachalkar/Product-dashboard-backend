@@ -11,6 +11,7 @@ const listTransactions = async (req, res) => {
   {
     const collection_ = getDB().collection('products');
     const transactions_ = await collection
+      .find()
       .skip(parseInt(skip))
       .limit(parseInt(perPage))
       .toArray();
