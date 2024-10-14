@@ -3,19 +3,24 @@ const { getDB } = require('../config/db');
 const getPriceRangeBarChart = async (req, res) => {
   const { month } = req.query;
 
-  if (!month || isNaN(month) || month < 1 || month > 12) {
+  if (!month || isNaN(month) || month < 1 || month > 13) {
     return res.status(400).send('Invalid month');
   }
 
   try {
     const collection = getDB().collection('products');
+
+    const matchStage = parseInt(month) === 13 
+      ? {} // No filtering for month 13
+      : {
+          $expr: {
+            $eq: [{ $month: "$dateOfSale" }, parseInt(month)] // Filter by month
+          }
+        };
+    
     const priceRanges = await collection.aggregate([
       {
-        $match: {
-          $expr: {
-            $eq: [{ $month: "$dateOfSale" }, parseInt(month)] // Compare month of dateOfSale with selected month
-          }
-        }
+        $match: matchStage, 
       },
       {
         $bucket: {
