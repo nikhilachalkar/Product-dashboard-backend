@@ -24,10 +24,13 @@ const listTransactions = async (req, res) => {
       
      if (search) {
       const priceSearch = Number(search);
-      filter.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
-      ];
+      const filter = {
+      $or: [
+      { title: { $regex: search, $options: 'i' } },
+      { description: { $regex: search, $options: 'i' } }
+        ]
+      };
+
       if (!isNaN(priceSearch)) {
         filter.$or.push({ price: priceSearch });
       }
