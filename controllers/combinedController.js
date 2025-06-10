@@ -13,7 +13,7 @@ const getCombinedData = async (req, res) => {
   try {
     const collection = getDB().collection('products');
 
-    // Initiate all queries concurrently
+   
     const transactionsPromise = collection.find({
       $expr: {
         $eq: [{ $month: "$dateOfSale" }, parseInt(month)]
