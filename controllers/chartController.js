@@ -14,7 +14,7 @@ const getPriceRangeBarChart = async (req, res) => {
       ? {} // No filtering for month 13
       : {
           $expr: {
-            $eq: [{ $month: "$dateOfSale" }, parseInt(month)] // Filter by month
+            $eq: [{ $month: "$dateOfSale" }, parseInt(month)] 
           }
         };
     
@@ -32,7 +32,7 @@ const getPriceRangeBarChart = async (req, res) => {
       },
     ]).toArray();
 
-    // Rename boundaries to desired labels
+    
     const labels = [
       '0-100',
       '101-200',
@@ -71,7 +71,7 @@ const getCategoryPieChart = async (req, res) => {
       {
         $match: {
           $expr: {
-            $eq: [{ $month: "$dateOfSale" }, parseInt(month)] // Compare month of dateOfSale with selected month
+            $eq: [{ $month: "$dateOfSale" }, parseInt(month)] 
           }
         }
       },
@@ -85,7 +85,7 @@ const getCategoryPieChart = async (req, res) => {
       }
     ]).toArray();
 
-    console.log('Price ranges:', priceRanges); // Log the query result for debugging
+    console.log('Price ranges:', priceRanges); 
 
     res.json(priceRanges);
   } catch (err) {
