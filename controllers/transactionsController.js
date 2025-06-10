@@ -4,7 +4,7 @@ const { getDB } = require('../config/db');
 const listTransactions = async (req, res) => {
   const { month, search = '', page = 1, perPage = 10 } = req.query;
 
-  // Validate month input
+ 
   if (!month || isNaN(month) || month < 1 || month > 13) {
     return res.status(400).send('Invalid month');
   }
@@ -12,7 +12,7 @@ const listTransactions = async (req, res) => {
   try {
     const skip = (page - 1) * perPage;
 
-    // If month is 13, return all products without filtering by month
+    
     if (parseInt(month) === 13) {
       const collection_ = getDB().collection('products');
       let transactions_ = await collection_
@@ -49,14 +49,14 @@ const listTransactions = async (req, res) => {
       return res.status(200).json(transactions_);
     }
 
-    // Filter for other months
+    
     const filter = {
       $expr: {
         $eq: [{ $month: "$dateOfSale" }, parseInt(month)]
       }
     };
 
-    // Apply search filters
+    
     if (search) {
       const priceSearch = Number(search);
       filter.$or = [
@@ -68,7 +68,7 @@ const listTransactions = async (req, res) => {
       }
     }
 
-    // Query database
+    
     const collection = getDB().collection('products');
     const transactions = await collection
       .find(filter)
@@ -90,13 +90,13 @@ const seedDatabase = async (req, res) => {
 
     const collection = getDB().collection('products');
 
-    // Clear existing records
+   
     await collection.deleteMany({});
 
-    // Insert new data
+    
     await collection.insertMany(data);
 
-    // Convert dateOfSale from string to date
+    
     await collection.updateMany(
       { dateOfSale: { $type: "string" } },
       [
