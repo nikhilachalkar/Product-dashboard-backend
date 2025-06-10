@@ -11,7 +11,7 @@ const getPriceRangeBarChart = async (req, res) => {
     const collection = getDB().collection('products');
 
     const matchStage = parseInt(month) === 13 
-      ? {} // No filtering for month 13
+      ? {} 
       : {
           $expr: {
             $eq: [{ $month: "$dateOfSale" }, parseInt(month)] 
